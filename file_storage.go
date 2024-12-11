@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -20,7 +21,9 @@ func ensureDirExists() {
 func SaveFile(file multipart.File, filename string) error {
 	ensureDirExists()
 
-	newFilename := filename + uuid.New().String()
+	ext := filepath.Ext(filename)
+	nameWithoutExt := strings.TrimSuffix(filename, ext)
+	newFilename := nameWithoutExt + uuid.New().String() + ext
 
 	dst, err := os.Create(filepath.Join(uploadDir, newFilename))
 	if err != nil {
