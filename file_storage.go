@@ -12,6 +12,7 @@ import (
 
 const uploadDir = "uploads"
 
+// should probably belong in client code when starting the server instead
 func ensureDirExists() {
 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 		os.Mkdir("uploads", 0755)
