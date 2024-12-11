@@ -12,7 +12,7 @@ func fileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	const maxUploadSize = 50 * 1024 * 1024 //50Mb
+	const maxUploadSize = 50 << 20 //50Mb
 	if r.ContentLength > maxUploadSize {
 		http.Error(w, "File size too large", http.StatusRequestEntityTooLarge)
 		log.Printf("Attempt to upload file exceeding limit. Size: %v", r.ContentLength)
@@ -32,9 +32,17 @@ func fileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("upload_file")
 	if err != nil {
 		http.Error(w, "Failure uploading file", http.StatusBadRequest)
+		log.Printf("File upload error: %v", err)
 		return
 	}
 	defer file.Close()
+
+	err = SaveFile(file, handler.Filename)
+	if err != nil {
+		http.Error(w, "Failure saving file", http.StatusInternalServerError)
+		log.Printf("Failure saving file: %v", err)
+		return
+	}
 
 	log.Printf("Handled file upload %s of %v bytes", handler.Filename, handler.Size)
 	fmt.Fprintf(w, "Uploaded file: %s\n", handler.Filename)
