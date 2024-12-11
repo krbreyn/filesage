@@ -45,7 +45,7 @@ func (w *Watchlist) handleRecursiveDir(dir string) error {
 
 	for _, file := range files {
 		if file.IsDir() {
-			absFilePath, err := filepath.Abs(file.Name())
+			absFilePath := filepath.Join(dir, file.Name())
 			if err != nil {
 				return err
 			}

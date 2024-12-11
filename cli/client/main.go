@@ -57,9 +57,13 @@ func addToWatchlist(files []string, watchRecurse bool) {
 
 		if stat.IsDir() {
 			watchlist.AddWatchlistDir(watchRecurse, absFilePath)
+			fmt.Print("added dir ", file)
+			if watchRecurse {
+				fmt.Print(" and subdirs\n")
+			}
 		} else {
 			watchlist.AddWatchlistFile(absFilePath)
+			fmt.Println("added file", file)
 		}
 	}
-	fmt.Println(watchlist)
 }
