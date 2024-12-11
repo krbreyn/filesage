@@ -1,6 +1,9 @@
 package filesage
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 type Watchlist struct {
 	Dirs  []string `json:"dirs"`
@@ -14,8 +17,8 @@ func (w *Watchlist) LoadFromJson() {
 
 }
 
-func (w *Watchlist) AddWatchlistFile(filenames ...string) {
-	w.Files = append(w.Files, filenames...)
+func (w *Watchlist) AddWatchlistFile(filename string) {
+	w.Files = append(w.Files, filename)
 
 }
 
@@ -42,8 +45,13 @@ func (w *Watchlist) handleRecursiveDir(dir string) error {
 
 	for _, file := range files {
 		if file.IsDir() {
-			w.Dirs = append(w.Dirs, file.Name())
-			w.handleRecursiveDir(file.Name())
+			absFilePath, err := filepath.Abs(file.Name())
+			if err != nil {
+				return err
+			}
+
+			w.Dirs = append(w.Dirs, absFilePath)
+			w.handleRecursiveDir(absFilePath)
 		}
 	}
 
